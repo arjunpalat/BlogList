@@ -8,9 +8,14 @@ blogsRouter.get("/", (request, response) => {
 });
 
 blogsRouter.post("/", (request, response) => {
-  const blog = new Blog(request.body);
+  if (!request.body.title || !request.body.url) {
+    return response.status(400).json("Invalid request!");
+  }
+  
+  const blog = { ...request.body, likes: request.body.likes || 0 };
+  const blogObject = new Blog(blog);
 
-  blog.save().then((result) => {
+  blogObject.save().then((result) => {
     response.status(201).json(result);
   });
 });
